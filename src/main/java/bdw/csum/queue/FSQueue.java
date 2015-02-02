@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 柏大衛
+ *  Copyright 2011-2015 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ import bdw.csum.entry.InvalidEntryException;
 import bdw.csum.entry.FileEntry;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Stack;
 
@@ -48,6 +50,8 @@ public class FSQueue extends EntryQueue {
 	/**
 	 * Construct an instance. Ignores special mac files by default.
 	 * @param startPath The pathname to start queuing from
+	 * 
+	 * @throws bdw.csum.entry.InvalidEntryException
 	 */
 	public FSQueue(String startPath) throws InvalidEntryException {		
 		super();
@@ -79,6 +83,7 @@ public class FSQueue extends EntryQueue {
 	/**
 	 * {@inheritDoc}
 	 * @return true if there are no more entries in the queue
+	 * @throws bdw.csum.entry.InvalidEntryException
 	 */
 	@Override
 	public boolean isEmpty() throws InvalidEntryException {
@@ -89,7 +94,7 @@ public class FSQueue extends EntryQueue {
 	/**
 	 * {@inheritDoc}
 	 * @return the next file entry, or null if there are no more.
-	 * @throws InvalidEntry if something goes amis while traversing the file system.
+	 * @throws InvalidEntryException if something goes amis while traversing the file system.
 	 */
 	@Override
 	public FileEntry dequeue() throws InvalidEntryException {
@@ -101,9 +106,10 @@ public class FSQueue extends EntryQueue {
 		FileEntry entry = null;
 		MessageDigest digest;
 		byte[] readBuffer = new byte[1024];
+		InputStream stream = null;
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
-			InputStream stream = new FileInputStream(nextFile);
+			stream = new FileInputStream(nextFile);
 			
 			int bytesRead = stream.read(readBuffer);
 			while (bytesRead != -1) {
@@ -115,8 +121,18 @@ public class FSQueue extends EntryQueue {
 										new Date(nextFile.lastModified()),
 										nextFile.getAbsolutePath().substring(basePath.length()));
 			nextFile = null;
-		} catch (Exception e) {
-			throw new InvalidEntryException("Exception while building entry for " + nextFile.getAbsolutePath(), e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new InvalidEntryException("NoSuchAlgorithmException while building entry for " + nextFile.getAbsolutePath(), e);
+		} catch (IOException e) {
+			throw new InvalidEntryException("IOException while building entry for " + nextFile.getAbsolutePath(), e);
+		} finally {
+			try {
+				if (stream != null) {
+					stream.close();
+				}
+			} catch (IOException e) {
+				throw new InvalidEntryException("Could not close stream for " + nextFile.getAbsolutePath(), e);
+			}
 		}
 				
 		return entry;
@@ -126,6 +142,7 @@ public class FSQueue extends EntryQueue {
 	/**
 	 * Walk through the stack of things still todo, and find the
 	 * next file that we'll want to handle
+	 * @throws bdw.csum.entry.InvalidEntryException
 	 */
 	protected void findNext() throws InvalidEntryException {
 		if ((nextFile != null) || (todo.size() == 0)) {

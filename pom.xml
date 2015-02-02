@@ -6,7 +6,7 @@
 	<groupId>bdw</groupId>
 	<artifactId>csum</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
+	<version>1.0.2</version>
 
 	<url>https://github.com/bodawei</url>
 	

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 柏大衛
+ *  Copyright 2011-2015 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ public class CLI {
 	 *    [-c] [-a] [-r] [-m] [-s] path1 path2:  if at least one flag is specified,
 	 *			the list the Changed, Added, Removed, Moved, or Same files
 	 * @param args Command line arguments
+	 * @throws bdw.csum.entry.InvalidEntryException
 	 */
 	public static void main(String[] args) throws InvalidEntryException {
 		if (args.length <= 0) {
@@ -68,18 +69,21 @@ public class CLI {
 				Writer writer = new OutputStreamWriter(System.out, Charset.forName("UTF-8"));
 				cli.listDirectory(args[0], false, writer);
 				writer.flush();
+				writer.close();
 				System.exit(0);
 			} else if (args.length == 2) {
 				if (args[0].equals("-a")) {
 					Writer writer = new OutputStreamWriter(System.out, Charset.forName("UTF-8"));
 					cli.listDirectory(args[0], true, writer);
 					writer.flush();
+					writer.close();
 					System.exit(0);
 				}
 			}
 			cli.prepForCompare(args);
-		} catch (Exception e) {
-			System.err.println("Got an exception: ");
+		} catch (InvalidEntryException e) {
+			e.printStackTrace(System.err);
+		} catch (IOException e) {
 			e.printStackTrace(System.err);
 		}
 	}
@@ -97,6 +101,7 @@ public class CLI {
 	 * @param all
 	 * @param writer
 	 * @throws InvalidEntryException 
+	 * @throws java.io.IOException 
 	 */
 	public void listDirectory(String path, boolean all, Writer writer) throws InvalidEntryException, IOException {
 		FSQueue queue = new FSQueue(path);	
@@ -127,6 +132,8 @@ public class CLI {
 	 * entries in two queues.
 	 * 
 	 * @param args The command line arguments
+	 * @throws java.io.IOException
+	 * @throws bdw.csum.entry.InvalidEntryException
 	 */
 	protected void prepForCompare(String[] args) throws IOException, InvalidEntryException {
 		boolean setOneOption = false;
@@ -174,7 +181,9 @@ public class CLI {
 	 * 
 	 * @param path1 path to an archive or a directory
 	 * @param path2 path to an archive or a directory
+	 * @param writer The writer to write the results of the comparison to
 	 * @throws IOException 
+	 * @throws bdw.csum.entry.InvalidEntryException 
 	 */
 	public void compare(String path1, String path2, Writer writer) throws IOException, InvalidEntryException {
 		File f1 = new File(path1);
@@ -228,6 +237,10 @@ public class CLI {
 	
 	/**
 	 * Convenience routine to write out a bunch of entries
+	 * @param name The name of the set of files
+	 * @param set The set of files to be written
+	 * @param writer The writer to write to
+	 * @throws java.io.IOException
 	 */
 	protected void writeEntries(String name, Set<FileEntry> set, Writer writer) throws IOException {
 		writer.write("\n" + name + "\n");

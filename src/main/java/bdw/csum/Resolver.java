@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 柏大衛
+ *  Copyright 2011-2015 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import bdw.csum.queue.EntryQueue;
 import bdw.csum.entry.MovedEntry;
 import bdw.csum.entry.ChangedEntry;
 import bdw.csum.entry.FileEntry;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,22 +47,22 @@ public class Resolver {
 	/**
 	 * The set of files that haven't changed.
 	 */
-	private HashSet<FileEntry> unchangedSet;
+	private final HashSet<FileEntry> unchangedSet;
 	
 	/**
 	 * The set of files added to the new report
 	 */
-	private HashSet<FileEntry> addedSet;
+	private final HashSet<FileEntry> addedSet;
 	
 	/**
 	 * The set of files removed from the first report
 	 */
-	private HashSet<FileEntry> removedSet;
+	private final HashSet<FileEntry> removedSet;
 	
 	/**
 	 * The set of files changed between the two reports
 	 */
-	private HashSet<FileEntry> changedSet;
+	private final HashSet<FileEntry> changedSet;
 	
 	/**
 	 * Files that appear to be moved and renamed.
@@ -76,7 +75,7 @@ public class Resolver {
 	 * 
 	 * @param oldReport A queue of old file entries
 	 * @param newReport A queue of new file entries
-	 * @throws InvalidEntry If an error occurs while retrieving the entries from the queues
+	 * @throws InvalidEntryException If an error occurs while retrieving the entries from the queues
 	 */
 	public Resolver(EntryQueue oldReport, EntryQueue newReport) throws InvalidEntryException {		
 		unchangedSet = new HashSet<FileEntry>();
@@ -169,7 +168,6 @@ public class Resolver {
 				}
 			}
 		}
-		newMap = null; // allow quicker garbage collection.
 
 		// The removed set is just what is left in the old mapping.
 		removedSet.addAll(oldMap.values());

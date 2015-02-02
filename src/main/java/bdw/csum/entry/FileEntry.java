@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 柏大衛
+ *  Copyright 2011-2015 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,8 @@ public class FileEntry {
 
 	/**
 	 * Reads information about a file from an archive (output from toString()).
+	 * @param source The reader to read from
+	 * @throws java.io.IOException
 	 */
 	public FileEntry(CSumReader source) throws IOException {
 		BuilderUtils f = new BuilderUtils();

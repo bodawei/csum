@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 柏大衛
+ *  Copyright 2011-2015 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@ package bdw.csum.queue;
 
 import bdw.csum.entry.InvalidEntryException;
 import bdw.csum.entry.FileEntry;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * A queue of Entries, where individual entries can only be dequeued.
@@ -51,7 +49,8 @@ public abstract class EntryQueue  {
 	}
 	/**
 	 * @return The next entry in the queue, or null if no more.
-	 * @throws exception if a problem is found when trying to retrieve the next
+	 * @throws bdw.csum.entry.InvalidEntryException
+	 * @throws InvalidEntryException if a problem is found when trying to retrieve the next
 	 * entry.
 	 */
 	public abstract FileEntry dequeue() throws InvalidEntryException;
@@ -59,6 +58,7 @@ public abstract class EntryQueue  {
 	/**
 	 * @return true if there are no more entries in the queue (and the next
 	 * dequeue() will return null)
+	 * @throws bdw.csum.entry.InvalidEntryException
 	 */
 	public abstract boolean isEmpty() throws InvalidEntryException;
 	

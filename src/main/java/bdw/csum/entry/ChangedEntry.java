@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 柏大衛
+ *  Copyright 2011-2015 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,7 @@ public class ChangedEntry extends FileEntry {
 
 	/**
 	 * {@inheritdoc}
+	 * @return hash code
 	 */
 	@Override
 	public int hashCode() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 柏大衛
+ *  Copyright 2011-2015 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ public class ArchiveQueue extends EntryQueue {
 	 * specifying otherwise, this assumes that the base path is / and the
 	 * start time is Dec 31, 1969
 	 * @param input The stream to read from
+	 * @throws bdw.csum.entry.InvalidEntryException
 	 */
 	public ArchiveQueue(InputStream input) throws InvalidEntryException {
 		super();
@@ -90,7 +91,7 @@ public class ArchiveQueue extends EntryQueue {
 	 * {@inheritDoc}
 	 * This is NOT tolerant of errors in the input stream.
 	 * @return the next file entry, or null if there are no more.
-	 * @throws InvalidEntry if a parsing error is encountered while reading from the stream
+	 * @throws InvalidEntryException if a parsing error is encountered while reading from the stream
 	 */
 	@Override
 	public FileEntry dequeue() throws InvalidEntryException {
@@ -180,6 +181,6 @@ public class ArchiveQueue extends EntryQueue {
 	 * @return true if the character is a newline or carriage return
 	 */
 	private boolean isEol(int aChar) {
-		return ((aChar == '\n') || (aChar == '\r')) ? true : false;
+		return ((aChar == '\n') || (aChar == '\r'));
 	}
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 柏大衛
+ *  Copyright 2011-2015 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,8 @@ import java.util.Date;
 public class BuilderUtils {
 	
 	/**
+	 * @param builder The string builder to append a date to
 	 * @param date a date value (not null)
-	 * @return A string version of the date formatted in a system and locale
-	 * independent fashion.
 	 */
 	public void appendDate(StringBuilder builder, Date date) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS");
@@ -46,8 +45,8 @@ public class BuilderUtils {
 	 * without problems.  Note, however, that CR and LF in it are quoted in
 	 * a way that will make them not usable in that way.
 	 * 
+	 * @param builder The string builder to append a date to
 	 * @param path a pathname to format
-	 * @return A copy of the input path ready to be written out.
 	 */
 	public void appendPath(StringBuilder builder, String path) {		
 		builder.append("\"");
