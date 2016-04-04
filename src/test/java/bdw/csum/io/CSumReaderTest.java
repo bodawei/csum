@@ -171,4 +171,12 @@ public class CSumReaderTest {
 			assertEquals('5', r.read());
 		}
 	}
+
+	@Test
+	public void readDate_FollowedByNewLine_DoesNotConsumerNewLine() throws IOException {
+		CSumReader r = new CSumReader(utils.makeInputStream("2010.10.10.01.02.03.456\n"));
+		Date result = r.readDate();
+		assertEquals(utils.makeDate(2010, 10, 10, 01, 02, 03, 456), result);
+		assertEquals('\n', r.read());
+	}
 }

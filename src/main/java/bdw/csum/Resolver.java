@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 柏大衛
+ *  Copyright 2011-2016 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,6 +168,7 @@ public class Resolver {
 				}
 			}
 		}
+		newMap = null; // allow quicker garbage collection.
 
 		// The removed set is just what is left in the old mapping.
 		removedSet.addAll(oldMap.values());

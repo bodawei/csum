@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 柏大衛
+ *  Copyright 2011-2016 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,9 +126,11 @@ public class ArchiveQueue extends EntryQueue {
 							startTime = source.readDate();
 						}
 					}
+					aChar = readChar();
 					while ((!isEol(aChar)) && (aChar != -1)) {
 						aChar = readChar();
 					}
+					unreadChar();
 					break;
 				case '\n':
 				case '\r':

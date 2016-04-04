@@ -175,20 +175,13 @@ public class CSumReader extends BufferedReader {
 		skipWhitespace();
 
 		StringBuilder buffer = new StringBuilder();
-		mark(24);
-		int aChar = read();
-		int charCount = 1;
+		mark(23);
+		int aChar;
 
-		while ((aChar != '\r') && (aChar != '\n') && (aChar != ' ') &&
-				  (aChar != '\t') && (aChar != -1)) {
-			if (charCount > 23) {
-				reset();
-				buffer = new StringBuilder();
-				break;
-			} else {
+		for (int index = 0; index < 23; index++) {
+			aChar = read();
+			if (aChar != -1) {
 				buffer.append((char)aChar);
-				aChar = read();
-				charCount++;
 			}
 		}
 
@@ -197,6 +190,7 @@ public class CSumReader extends BufferedReader {
 		try {
 			return formatter.parse(buffer.toString());
 		} catch (ParseException e) {
+			reset();
 			throw new IOException("Parse problem", e);
 		}
 	}

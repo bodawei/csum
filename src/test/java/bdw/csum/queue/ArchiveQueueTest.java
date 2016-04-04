@@ -21,6 +21,7 @@ import bdw.csum.entry.FileEntry;
 import bdw.csum.io.BuilderUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import static junit.framework.Assert.*;
 import org.junit.Before;
@@ -109,4 +110,23 @@ public class ArchiveQueueTest {
 		assertNull(q.dequeue());
 	}
 
+
+	@Test
+	public void dequeue_DoubleCommentLine_TrailingCommentIgnored() throws InvalidEntryException, IOException {
+		ArchiveQueue q = new ArchiveQueue(utils.makeInputStream("# CSum\n" +
+			"# Version 1\n" +
+			"# Directory \"/Volumes/Backup/Archives2/\"\n" +
+			"# Start 2011.08.18.22.46.03.074\n" +
+			"50efdf4e3dca904c7a02ac6e4270739b7afc62623933a8ce0e76f1659cf5d449	169178994	2011.07.11.21.12.04.000	\"./Cached/Philip Glass/Koyaanisqatsi/Koyaanisqatsi.m4a\"\n"));
+		Date expectedDate = utils.makeDate(2011, 8, 18, 22, 46, 3, 74);
+		
+		FileEntry expectedEntry = new FileEntry(utils.makeByteArrayFromHexString("50efdf4e3dca904c7a02ac6e4270739b7afc62623933a8ce0e76f1659cf5d449"),
+				  169178994, utils.makeDate(2011, 7, 11, 21, 12, 04, 0), "./Cached/Philip Glass/Koyaanisqatsi/Koyaanisqatsi.m4a");
+		
+		assertEquals("/Volumes/Backup/Archives2/", q.getBasePath());
+		assertEquals(expectedDate, q.getStartTime());
+		
+		assertEquals(expectedEntry, q.dequeue());
+		assertNull(q.dequeue());
+	}
 }

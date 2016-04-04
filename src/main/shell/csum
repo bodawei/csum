@@ -1,4 +1,4 @@
 #!	/bin/sh
-BINLOC=`dirname $0`
-java -cp "$BINLOC/csum-1.0.2.jar" bdw.csum.cli.CLI "$@"
 
+SCRIPT_DIR="`dirname "$0"`"
+java -cp $SCRIPT_DIR/csum-1.1.1.jar bdw.csum.cli.CLI "$@"

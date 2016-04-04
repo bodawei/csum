@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 柏大衛
+ *  Copyright 2011-2016 柏大衛
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,8 +121,14 @@ public class CLI {
 		utils.appendDate(builder, queue.getStartTime());
 		writer.write(builder.toString() +  "\n");
 		while (!queue.isEmpty()) {
-			FileEntry entry = queue.dequeue();
-			writer.write(entry.toString() +  "\n");
+			try {
+				FileEntry entry = queue.dequeue();
+				writer.write(entry.toString() +  "\n");
+			} catch (Exception e) {
+				writer.write("# Problem with entry\n");
+				System.err.println("Ignoring exception while dequeueing: ");
+				e.printStackTrace(System.err);
+			}
 		}
 	}
 
@@ -188,17 +194,23 @@ public class CLI {
 	public void compare(String path1, String path2, Writer writer) throws IOException, InvalidEntryException {
 		File f1 = new File(path1);
 		EntryQueue oldQueue;
+
+		writer.write("# CSum comparison\n");
 		if (f1.isDirectory()) {
+			writer.write("# Old from path " + path1 + "\n");
 			oldQueue = new FSQueue(path1);
 		} else {
+			writer.write("# Old from file " + path1 + "\n");
 			oldQueue = new ArchiveQueue(new FileInputStream(path1));
 		}
 		
 		File f2 = new File(path2);
 		EntryQueue newQueue;
 		if (f2.isDirectory()) {
+			writer.write("# New from path " + path2 + "\n");
 			newQueue = new FSQueue(path2);
 		} else {
+			writer.write("# New from file " + path2 + "\n");
 			newQueue = new ArchiveQueue(new FileInputStream(path2));
 		}
 		
@@ -224,7 +236,7 @@ public class CLI {
 			Collections.sort(entries, new EntryComparator());
 			for (FileEntry entry : entries) {
 				MovedEntry mEntry = (MovedEntry) entry;
-				writer.write(mEntry.getPathname() + "\n\t\tmoved to: " +
+				writer.write("The old file: " + mEntry.getPathname() + "\n    moved to: " +
 						mEntry.getNewPathname() + "\n");
 			}
 		}
